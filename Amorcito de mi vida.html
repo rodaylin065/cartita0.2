@@ -1,0 +1,282 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta 💌</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  background: linear-gradient(-45deg, #fce4ec, #f8bbd0, #f48fb1, #fce4ec);
+  background-size: 400% 400%;
+  animation: bg 10s ease infinite;
+}
+
+@keyframes bg {
+  0% {background-position:0%}
+  50% {background-position:100%}
+  100% {background-position:0%}
+}
+
+/* 💖 corazones */
+.heart {
+  position: fixed;
+  bottom: -20px;
+  color: rgba(255,0,100,0.5);
+  font-size: 20px;
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  to {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}
+
+/* pantallas */
+.screen {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.active {
+  display: flex;
+}
+
+.password-screen {
+  flex-direction: column;
+  text-align: center;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 70px);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.key {
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  background: #ec407a;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.input-display {
+  font-size: 25px;
+  letter-spacing: 10px;
+}
+
+/* carta */
+#notepadScreen {
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.notepad {
+  background: white;
+  max-width: 700px;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  font-family: 'Playfair Display', serif;
+}
+
+p {
+  white-space: pre-line;
+}
+
+/* botón sorpresa */
+#surpriseBtn {
+  display: none;
+  margin-top: 20px;
+  padding: 15px;
+  border: none;
+  background: #d81b60;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* puzzle */
+#puzzle {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  gap: 3px;
+  margin-top: 20px;
+}
+
+.piece {
+  width: 100px;
+  height: 100px;
+  background-size: 300px 300px;
+  cursor: grab;
+}
+
+</style>
+</head>
+<body>
+
+<audio id="music" loop>
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
+<!-- 🔒 -->
+<div id="passwordScreen" class="screen password-screen active">
+<h2>🔒 Enter password</h2>
+<div class="input-display" id="inputDisplay">••••</div>
+
+<div class="keypad">
+<button class="key" onclick="enterDigit('1')">1</button>
+<button class="key" onclick="enterDigit('2')">2</button>
+<button class="key" onclick="enterDigit('3')">3</button>
+<button class="key" onclick="enterDigit('4')">4</button>
+<button class="key" onclick="enterDigit('5')">5</button>
+<button class="key" onclick="enterDigit('6')">6</button>
+<button class="key" onclick="enterDigit('7')">7</button>
+<button class="key" onclick="enterDigit('8')">8</button>
+<button class="key" onclick="enterDigit('9')">9</button>
+<div></div>
+<button class="key" onclick="enterDigit('0')">0</button>
+<div></div>
+</div>
+</div>
+
+<!-- 💌 -->
+<div id="notepadScreen" class="screen">
+<div class="notepad">
+<h3>📅 25 MAYO 2026</h3>
+<h4>💌 Mi Querida Elianny</h4>
+<p id="text"></p>
+
+<button id="surpriseBtn" onclick="showPuzzle()">🎁 Sorpresa</button>
+</div>
+</div>
+
+<!-- 🧩 -->
+<div id="puzzle" class="screen">
+<h2>Arma nuestra historia 💖</h2>
+<div class="grid" id="grid"></div>
+</div>
+
+<script>
+
+const correctPassword = '2106';
+let input = '';
+
+const fullText = `Aprovecho esta fecha tan especial, tu cumpleaños, amor de mi vida, para desearte un muy feliz cumpleaños y seguir con la tradición de escribirte una carta, en la que pueda expresarte una parte de todo lo que siento, como en cada una de las cartas que te he dado y que aún te daré en toda una vida que aun nos falta por vivir. Juntos… Quiero empezar diciendo que; siempre estaré agradecido por haberte conocido y por todo lo que aportas a mi vida. Nunca me arrepentiré de haberte dejado entrar en mi mundo, gracias por tanto mi niña y perdón por las veces que no fui suficiente.
+
+No hay palabras suficientes para expresar todo lo que significas para mí. Eres mi compañera, mi mejor amiga, mi confidente y mi gran amor. Cada gesto tuyo, cada mirada, cada palabra, me recuerda cuán afortunado soy de tenerte. Amo la manera en que ríes, la pasión con la que me amas y la ternura que hay en ti. Me inspiras a ser mejor persona cada día, y no hay nada que desee más que seguir construyendo una vida contigo, paso a paso, sueño a sueño. Gracias por estar, por quedarte, por creer en nosotros. Gracias por amar con tanta fuerza y sinceridad. Prometo seguir cuidando este amor, protegerlo y hacerlo crecer, porque ya tengo claro que tú eres mi hogar, mi destino y mi eternidad.
+
+Una vez dije que no tendría una relación a distancia. Y esto lo dije porque no había experimentado este amor, tampoco creía que le tendría confianza a alguien de esa forma. Pero tu me has demostrado y me has hecho empezar a creer en todo eso que no creía. Mi niña luz de mis ojos. Y por eso… No importa si no te puedo ver todos los días, no importa si estás lejos de mí, no importa qué tan mal esté mi día o si casi no puedo escuchar tu voz. igual te extraño, igual TE AMO, y te amo solo a ti mi amor. Porque, aunque la distancia exista, mi corazón siempre está contigo. Eres mi pensamiento más bonito cada día, la razón por la que sonrío incluso cuando todo se siente difícil. Eres mi nenita preciosa, la dueña de mi amor, y quiero que nunca olvides que te amo con todo mi corazón.
+
+Te amo profundamente. ♡ [ERES LO MAS BONITO DE MI VIDA♡]`;
+
+/* 💖 corazones */
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤";
+  heart.style.left = Math.random()*100 + "vw";
+  heart.style.animationDuration = (3 + Math.random()*3) + "s";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),5000);
+}, 300);
+
+/* contraseña */
+function enterDigit(d) {
+  if (input.length < 4) input += d;
+
+  const display = document.getElementById('inputDisplay');
+  display.textContent = input.padEnd(4,'•');
+
+  if (input.length === 4) {
+    if (input === correctPassword) {
+
+      document.getElementById('passwordScreen').classList.remove('active');
+      document.getElementById('notepadScreen').classList.add('active');
+
+      document.getElementById('music').play();
+      typeWriter();
+
+    } else {
+      alert("Incorrecta 💔");
+      input = '';
+      display.textContent = '••••';
+    }
+  }
+}
+
+/* ✨ escribir */
+function typeWriter() {
+  let i = 0;
+  const speed = 25;
+  const el = document.getElementById("text");
+
+  function write() {
+    if (i < fullText.length) {
+      el.innerHTML += fullText.charAt(i);
+      i++;
+      setTimeout(write, speed);
+    } else {
+      document.getElementById("surpriseBtn").style.display = "block";
+    }
+  }
+
+  write();
+}
+
+/* 🧩 puzzle */
+const imageSrc = "foto.jpg"; // CAMBIA ESTO
+
+function showPuzzle() {
+  document.getElementById("notepadScreen").style.display = "none";
+  document.getElementById("puzzle").style.display = "flex";
+  createPuzzle();
+}
+
+function createPuzzle() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  let pieces = [];
+
+  for (let i = 0; i < 9; i++) {
+    let div = document.createElement("div");
+    div.className = "piece";
+
+    const x = (i % 3) * -100;
+    const y = Math.floor(i / 3) * -100;
+
+    div.style.backgroundImage = `url(${imageSrc})`;
+    div.style.backgroundPosition = `${x}px ${y}px`;
+
+    pieces.push(div);
+  }
+
+  pieces.sort(() => Math.random() - 0.5);
+  pieces.forEach(p => grid.appendChild(p));
+}
+
+</script>
+</body>
+</html>
